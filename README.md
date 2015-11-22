@@ -13,7 +13,7 @@ On the repository there is a compiled binary for `linux-amd64` of the project [w
 
 ##How to use it
 
-    git clone git@github.com:dvddarias/webhook.git
+    git clone https://github.com/dvddarias/webhook.git
     cd webhook
     ./init_install.sh
     sudo service webhook status
