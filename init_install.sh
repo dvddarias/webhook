@@ -61,18 +61,18 @@ do_start() {
 		chown \$DAEMON_USER \"\${DAEMON_LOG}\"
 		chmod u+rw \"\${DAEMON_LOG}\"
 		if [ -z \"\${DAEMON_USER}\" ]; then
-			start-stop-daemon --start --quiet --oknodo --background \
-				--nicelevel \$DAEMON_NICE \
-				--chdir \"\${DAEMON_PWD}\" \
-				--pidfile \"\${DAEMON_PID}\" --make-pidfile \
+			start-stop-daemon --start --quiet --oknodo --background \\
+				--nicelevel \$DAEMON_NICE \\
+				--chdir \"\${DAEMON_PWD}\" \\
+				--pidfile \"\${DAEMON_PID}\" --make-pidfile \\
 				--startas /bin/bash -- -c \"exec \${DAEMON_PATH} \${DAEMON_OPTS} >> \${DAEMON_LOG} 2>&1\"
 			result=\$?
 		else
-			start-stop-daemon --start --quiet --oknodo --background \
-				--nicelevel \$DAEMON_NICE \
-				--chdir \"\${DAEMON_PWD}\" \
-				--pidfile \"\${DAEMON_PID}\" --make-pidfile \
-				--chuid \"\${DAEMON_USER}\" \
+			start-stop-daemon --start --quiet --oknodo --background \\
+				--nicelevel \$DAEMON_NICE \\
+				--chdir \"\${DAEMON_PWD}\" \\
+				--pidfile \"\${DAEMON_PID}\" --make-pidfile \\
+				--chuid \"\${DAEMON_USER}\" \\
 				--startas /bin/bash -- -c \"exec \${DAEMON_PATH} \${DAEMON_OPTS} >> \${DAEMON_LOG} 2>&1\"
 			result=\$?
 		fi
