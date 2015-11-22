@@ -39,7 +39,7 @@ DAEMON_NAME=\"$name\"
 DAEMON_USER=\"$user\"
 DAEMON_PATH=\"$run\"
 DAEMON_OPTS=\"$opts\"
-DAEMON_PWD =\"$dir\"
+DAEMON_PWD=\"$dir\"
 
 DAEMON_PID=\"/var/run/\${DAEMON_NAME}.pid\"
 DAEMON_LOG=\"/var/log/\${DAEMON_NAME}.log\"
