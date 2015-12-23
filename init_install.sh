@@ -139,6 +139,7 @@ esac
 "
 
 printf "$service" > "/tmp/$name"
+
 #copy the executable to local/bin
 sudo cp "$script_path" "$daemon_path"
 sudo chmod +x "$daemon_path"
