@@ -1,0 +1,6 @@
+[{
+    "id": "deploy",
+    "execute-command": "echo hola",
+    "command-working-directory": "/home/dvd/",
+    "include-command-output-in-response": true
+}]

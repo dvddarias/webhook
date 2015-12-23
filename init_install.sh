@@ -1,20 +1,28 @@
+#!/bin/bash
+#---------------------------------EDIT HERE-----------------------------------------
 name="webhook"
-shot_desc="Webhook"
+shot_desc="Deployment webhook"
 desc="A simple webhook written in Go."
 
 user="$(whoami)" #the user name that will run the script
-dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" #get the bash script directory
-run="$dir/$name"
-opts="-port 9000 -hooks hooks.json -verbose"
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" #get this bash script directory
+script_path="$dir/$name"
+#Uncomment this line to set the path of a configuration file
+script_config="$dir/config.json"
 
-if [ $# -eq 1 ]
-then
-	if [ "$1" = "-u" ]
-	then
-		sudo service $name stop
-		sudo rm /etc/init.d/$name
-		exit
-	fi
+daemon_pwd="/usr/local/bin"
+daemon_path="/usr/local/bin/$name"
+daemon_config="/etc/$name"
+daemon_opts="-port 9000 -hooks $daemon_config/${name}.config -verbose"
+#-----------------END OF EDIT UNLESS YOU KNOW WHAT YOU ARE DOING--------------------
+
+if [[ $# -eq 1 && "$1" = "-u" ]]; then
+	sudo service "$name" stop
+	sudo rm "$daemon_path"
+	sudo rm -rf "$daemon_config"
+	sudo rm "/etc/init.d/$name"
+	sudo update-rc.d "$name" remove
+	exit
 fi
 
 service="#!/bin/sh
@@ -37,9 +45,9 @@ service="#!/bin/sh
 
 DAEMON_NAME=\"$name\"
 DAEMON_USER=\"$user\"
-DAEMON_PATH=\"$run\"
-DAEMON_OPTS=\"$opts\"
-DAEMON_PWD=\"$dir\"
+DAEMON_PATH=\"$daemon_path\"
+DAEMON_OPTS=\"$daemon_opts\"
+DAEMON_PWD=\"$daemon_pwd\"
 
 DAEMON_PID=\"/var/run/\${DAEMON_NAME}.pid\"
 DAEMON_LOG=\"/var/log/\${DAEMON_NAME}.log\"
@@ -130,7 +138,19 @@ status)  do_status;  exit \$? ;;
 esac
 "
 
-printf "$service" > /tmp/$name
-sudo mv /tmp/$name /etc/init.d/$name
-sudo chmod +x /etc/init.d/$name
-sudo service $name start
+printf "$service" > "/tmp/$name"
+#copy the executable to local/bin
+sudo cp "$script_path" "$daemon_path"
+sudo chmod +x "$daemon_path"
+
+#copy the configuration if it is declared
+sudo mkdir -p "$daemon_config"
+if [[ -n "${script_config}" ]]; then
+	sudo cp "$script_config" "$daemon_config/${name}.config"
+fi
+
+#install the init script
+sudo mv "/tmp/$name" "/etc/init.d/$name"
+sudo chmod +x "/etc/init.d/$name"
+sudo service "$name" start
+sudo update-rc.d "$name" defaults
