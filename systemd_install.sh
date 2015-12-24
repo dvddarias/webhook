@@ -17,11 +17,12 @@ daemon_opts="-port 9000 -hooks $daemon_config/${name}.config -verbose"
 #-----------------END OF EDIT UNLESS YOU KNOW WHAT YOU ARE DOING--------------------
 
 if [[ $# -eq 1 && "$1" = "-u" ]]; then
-	sudo systemctl stop "${name}"
-	sudo rm "$daemon_path"
-	sudo rm -rf "$daemon_config"
-	sudo rm "/etc/systemd/${name}.service"
-	exit
+        sudo systemctl stop "${name}.service"
+        sudo systemctl disable "${name}.service"
+        sudo rm "$daemon_path"
+        sudo rm -rf "$daemon_config"
+        sudo rm "/etc/systemd/system/${name}.service"
+        exit
 fi
 
 service="[Unit]
@@ -49,10 +50,10 @@ sudo chmod +x "$daemon_path"
 #copy the configuration if it is declared
 sudo mkdir -p "$daemon_config"
 if [[ -n "${script_config}" ]]; then
-	sudo cp "$script_config" "$daemon_config/${name}.config"
+        sudo cp "$script_config" "$daemon_config/${name}.config"
 fi
 
 #install the systemd service
-sudo mv "/tmp/${name}.service" "/etc/systemd/${name}.service"
-sudo systemctl start "${name}"
-
+sudo mv "/tmp/${name}.service" "/etc/systemd/system/${name}.service"
+sudo systemctl enable "${name}.service"
+sudo systemctl start "${name}.service"
